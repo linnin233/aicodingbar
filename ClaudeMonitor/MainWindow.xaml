@@ -1,0 +1,15 @@
+<Window x:Class="ClaudeMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ClaudeMonitor" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        MinHeight="400" MinWidth="600">
+    <TabControl x:Name="MainTabControl">
+        <TabItem x:Name="SessionTab" Header="Session 列表"/>
+        <TabItem x:Name="ConfigTab" Header="配置"/>
+        <TabItem x:Name="DebugTab" Header="Debug"/>
+    </TabControl>
+</Window>
