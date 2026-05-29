@@ -4,5 +4,52 @@
              xmlns:local="clr-namespace:AiCodingBar"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
+        <!-- ToggleSwitch 样式 (CheckBox 模拟) — 全局共享 -->
+        <Style x:Key="ToggleSwitch" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="SwitchTrack"
+                                    Width="42" Height="22"
+                                    CornerRadius="11"
+                                    Background="#CCCCCC"
+                                    BorderBrush="#999999"
+                                    BorderThickness="1"/>
+                            <Border x:Name="SwitchThumb"
+                                    Width="16" Height="16"
+                                    CornerRadius="8"
+                                    Background="White"
+                                    HorizontalAlignment="Left"
+                                    Margin="3,0,0,0">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="1" Opacity="0.3" BlurRadius="2"/>
+                                </Border.Effect>
+                            </Border>
+                            <ContentPresenter Grid.Column="1"
+                                              Content="{TemplateBinding Content}"
+                                              VerticalAlignment="Center"
+                                              Margin="10,0,0,0"
+                                              TextBlock.FontSize="13"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Background" Value="#0078D4"/>
+                                <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="#0078D4"/>
+                                <Setter TargetName="SwitchThumb" Property="Margin" Value="23,0,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="SwitchTrack" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
