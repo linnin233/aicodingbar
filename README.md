@@ -120,7 +120,7 @@ The Dashboard window has three tabs:
 
 ## Configuration
 
-Config file: `~/.clawd-monitor/config.json`
+Config file: `~/.aicoding-bar/config.json`
 
 Created automatically on first run. Example:
 
@@ -151,7 +151,7 @@ Created automatically on first run. Example:
 }
 ```
 
-Runtime port is written to `~/.clawd-monitor/runtime.json` for the hook script to discover.
+Runtime port is written to `~/.aicoding-bar/runtime.json` for the hook script to discover.
 
 ## How It Works
 
@@ -188,7 +188,7 @@ This removes ClaudeMonitor entries from `~/.claude/settings.json` without affect
 
 1. Exit the app (right-click tray icon → Exit)
 2. Delete the `claude-monitor` folder
-3. Optionally delete config: `~/.clawd-monitor/`
+3. Optionally delete config: `~/.aicoding-bar/`
 
 ## Troubleshooting
 
@@ -199,12 +199,12 @@ This removes ClaudeMonitor entries from `~/.claude/settings.json` without affect
 
 **Hooks not working:**
 - Verify Node.js is installed: `node --version`
-- Check `~/.claude/settings.json` for `__claude_monitor__` key
+- Check `~/.claude/settings.json` for `__aicoding_bar__` key
 - Run `node hooks/install.js install` to reinstall hooks manually
 
 **Port conflict:**
 - The app tries ports 23400-23404 by default
-- Check `~/.clawd-monitor/runtime.json` for the actual port
+- Check `~/.aicoding-bar/runtime.json` for the actual port
 - Change `startPort` / `endPort` in config if needed
 
 ## Tech Stack

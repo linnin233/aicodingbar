@@ -20,7 +20,7 @@ const HOOK_EVENTS = [
   "Notification", "Elicitation", "WorktreeCreate",
 ];
 
-const MONITOR_HOOK_KEY = "__claude_monitor__";
+const MONITOR_HOOK_KEY = "__aicoding_bar__";
 
 function readSettings() {
   try {

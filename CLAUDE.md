@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ClaudeMonitor is a Windows taskbar-resident Claude Code session monitor. It embeds a colored text overlay into the Windows taskbar (via raw Win32 child window) showing real-time status of active Claude Code sessions. It also provides a WPF dashboard with session grid, config editing, and debug logging.
+AiCodingBar is a Windows taskbar-resident multi-agent coding session monitor. It embeds a **dual-line colored text overlay** into the Windows taskbar (via raw Win32 child window + GDI+) showing real-time status of active AI coding sessions (Claude Code, opencode). It also provides a WPF dashboard with session grid, config editing, and debug logging.
 
 GitHub: https://github.com/linnin233/claude-monitor (v0.0.1-Beta released)
 
@@ -12,16 +12,16 @@ GitHub: https://github.com/linnin233/claude-monitor (v0.0.1-Beta released)
 
 ```bash
 # Build (debug)
-cd ClaudeMonitor && dotnet build
+cd AiCodingBar && dotnet build
 
 # Build (release)
-cd ClaudeMonitor && dotnet build -c Release
+cd AiCodingBar && dotnet build -c Release
 
 # Run
-cd ClaudeMonitor && dotnet run
+cd AiCodingBar && dotnet run
 
 # Publish single-file executable (self-contained, ~147MB)
-cd ClaudeMonitor && dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+cd AiCodingBar && dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
 Requires .NET 8.0 SDK and Windows. The project uses both WPF and WinForms (`UseWPF=true`, `UseWindowsForms=true`).
@@ -29,37 +29,35 @@ Requires .NET 8.0 SDK and Windows. The project uses both WPF and WinForms (`UseW
 ## Architecture
 
 ```
-ClaudeMonitor/          # .NET 8.0 WPF application
+AiCodingBar/            # .NET 8.0 WPF application
 ├── App.xaml.cs         # Entry point: initializes all services, wires them together
 ├── MainWindow.xaml     # Dashboard window (SessionGrid | ConfigPanel | DebugLog tabs)
 ├── Server/
-│   ├── HttpStateServer.cs   # HttpListener on 127.0.0.1:23333-23337, receives POST /state
-│   ├── StateEngine.cs       # Event→state mapping, ConcurrentDictionary<string, SessionState>
+│   ├── HttpStateServer.cs   # HttpListener on 127.0.0.1:23333-23337, receives POST /state + /permission
+│   ├── StateEngine.cs       # Event→state mapping, ConcurrentDictionary<string, SessionState>, OneShot timers
 │   ├── HookInstaller.cs     # Runs hooks/install.js via node, reads ~/.claude/settings.json
 │   └── ProcessHelper.cs     # IsProcessAlive(pid) — used by CleanupDeadSessions
 ├── Models/
-│   ├── SessionState.cs      # SessionId, Status, ToolName, Cwd, SourcePid, SortIndex, etc.
-│   └── ConfigModel.cs       # Config structure: ServerConfig, TaskbarConfig, StateMapping
+│   ├── SessionState.cs      # SessionId, Status, AgentId, ToolName, Cwd, SourcePid, StateKind, etc.
+│   └── ConfigModel.cs       # Config: ServerConfig, TaskbarConfig, AgentDisplay, StateMapping, StateInfo
 ├── Config/
-│   └── ConfigManager.cs     # JSON read/write to ~/.clawd-monitor/config.json + runtime.json
+│   └── ConfigManager.cs     # JSON read/write to ~/.aicoding-bar/config.json + runtime.json
 ├── Taskbar/
-│   ├── NativeTaskbarText.cs # PRODUCTION: raw Win32 child window embedded in taskbar
-│   ├── TaskbarRenderer.cs   # LEGACY: WPF Window version (not wired, kept for reference)
-│   ├── SimpleTaskbarText.cs # LEGACY: WinForms version (not wired, kept for reference)
+│   ├── NativeTaskbarText.cs # PRODUCTION: raw Win32 child window + dual-line GDI+ rendering
+│   ├── TaskbarRenderer.cs   # LEGACY: WPF Window version (not wired)
+│   ├── SimpleTaskbarText.cs # LEGACY: WinForms version (not wired)
 │   └── TrayIcon.cs          # System tray NotifyIcon with context menu + mode switching
 ├── Dashboard/
 │   ├── SessionGrid.xaml/.cs     # DataGrid showing all sessions with filtering (all/active)
 │   ├── ConfigPanel.xaml/.cs     # Event→state mapping editor, mode selector, threshold config
-│   └── DebugLog.xaml/.cs        # RichTextBox log viewer + simulated event injection for testing
+│   └── DebugLog.xaml/.cs        # RichTextBox log viewer + simulated event injection
 ├── Native/
-│   └── TaskbarInterop.cs    # P/Invoke helpers (used by legacy implementations, not NativeTaskbarText)
-├── GlobalUsings.cs          # Resolves WPF vs WinForms type conflicts (Color, Application, etc.)
+│   └── TaskbarInterop.cs    # P/Invoke helpers (legacy only)
+├── GlobalUsings.cs
 └── AssemblyInfo.cs
-hooks/                  # Node.js scripts injected into Claude Code
-├── install.js          # Reads ~/.claude/settings.json, adds command hooks for all events
-│                         Marks with __claude_monitor__ key. install | uninstall commands.
-└── claude-status-hook.js  # Reads hook JSON from stdin, POSTs to ClaudeMonitor HTTP server
-                              Port discovered from ~/.clawd-monitor/runtime.json
+hooks/                  # Node.js hook scripts
+├── install.js          # Injects hooks into ~/.claude/settings.json (marker: __aicoding_bar__)
+└── claude-status-hook.js  # stdin JSON → POST /state to AiCodingBar HTTP server
 ```
 
 ## Data Flow
@@ -116,11 +114,14 @@ Events map to display states via `ConfigModel.DefaultMappings()`:
 
 **SessionEnd** is special — it bypasses the mapping and calls `RemoveSession(sessionId)` directly (clawd-on-desk pattern). This ensures closed sessions disappear immediately rather than lingering as "sleeping".
 
-## Three Display Modes
+## Dual-Line Display
 
-- **compact** (default): `1:思考|2:工作` — shows each session by SortIndex. Auto-switches to aggregate if sessions > `AutoSwitchThreshold` (default 7).
-- **aggregate**: `思考:1|工作:2` — groups by state, shows counts.
-- **highlight**: `工作 S2 +3` — shows only the most recently active session with count of others.
+The taskbar overlay uses **two lines** to fully utilize Win11 taskbar height:
+
+- **Line 1 — Aggregate Summary**: `C 思考:2 工作:1 | O 思考:1 工作:1` — grouped by agent + state
+- **Line 2 — Session Detail**: `C1:思考[15s]|C2:工作[Bash]|O1:思考[1m]` — per-session with agent prefix, duration, tool category
+- Config options: `ShowLine2`, `Line2MaxSessions`, `AutoFontSize`
+- When `ShowLine2` is false, falls back to single-line compact/aggregate/highlight modes
 
 ## Session Lifecycle
 
@@ -134,9 +135,9 @@ Events map to display states via `ConfigModel.DefaultMappings()`:
 - **Three taskbar implementations exist**: `NativeTaskbarText` is the production one. `TaskbarRenderer` (WPF) and `SimpleTaskbarText` (WinForms) are earlier iterations kept as reference.
 - **`TaskbarInterop.cs`** contains P/Invoke helpers used by the legacy implementations. `NativeTaskbarText` has its own P/Invoke declarations inline.
 - **`GlobalUsings.cs`** resolves WPF/WinForms type conflicts (`Color`, `Application`, `UserControl`, etc.) — WPF types win.
-- **Hook install is safe**: `install.js` preserves existing hooks, only adds missing entries, marks with `__claude_monitor__` key for detection/uninstall.
-- **Single instance**: Mutex `Global\ClaudeMonitor` prevents duplicate instances.
-- **Port discovery**: Server tries 23333→23337, writes actual port to `~/.clawd-monitor/runtime.json`. If port 23333 is occupied (e.g., by "Clawd on Desk"), falls back to next.
+- **Hook install is safe**: `install.js` preserves existing hooks, only adds missing entries, marks with `__aicoding_bar__` key for detection/uninstall.
+- **Single instance**: Mutex `Global\\AiCodingBar` prevents duplicate instances.
+- **Port discovery**: Server tries 23333→23337, writes actual port to `~/.aicoding-bar/runtime.json`. If port 23333 is occupied (e.g., by "Clawd on Desk"), falls back to next.
 
 ## Reference Projects
 
@@ -147,8 +148,8 @@ These sibling directories contain proven implementations that ClaudeMonitor was 
 
 ## Config & Runtime Files
 
-- `~/.clawd-monitor/config.json` — User config (server ports, taskbar mode, font, state mappings)
-- `~/.clawd-monitor/runtime.json` — Written by ClaudeMonitor at startup with `{ "port": N }`, read by hooks
+- `~/.aicoding-bar/config.json` — User config (server ports, taskbar mode, font, state mappings)
+- `~/.aicoding-bar/runtime.json` — Written by ClaudeMonitor at startup with `{ "port": N }`, read by hooks
 - `~/.claude/settings.json` — Claude Code settings, hooks injected here by `install.js`
 
 ## Testing During Development

@@ -32,7 +32,7 @@ Claude Code 生命周期事件
 claude-status-hook.js
     │  1. 从 stdin 读取 Claude Code 传入的 JSON payload
     │  2. EVENT_TO_STATE 映射表查表
-    │  3. 读 ~/.clawd-monitor/runtime.json 获取端口
+    │  3. 读 ~/.aicoding-bar/runtime.json 获取端口
     │  4. POST http://127.0.0.1:{port}/state
     ▼
 HttpStateServer.cs (HttpListener)
@@ -78,12 +78,12 @@ Windows 任务栏显示 "1:思考 | 2:工作 | 3:完成"
 
 这是 **唯一** 的状态检测通道。工作方式：
 
-1. **启动时自动安装**：`App.xaml.cs:47` 调用 `HookInstaller.EnsureInstalledAsync()`，如果 `~/.claude/settings.json` 中不存在 `__claude_monitor__` 标记，则运行 `node hooks/install.js install`
+1. **启动时自动安装**：`App.xaml.cs:47` 调用 `HookInstaller.EnsureInstalledAsync()`，如果 `~/.claude/settings.json` 中不存在 `__aicoding_bar__` 标记，则运行 `node hooks/install.js install`
 
 2. **Hook 注入位置**：`~/.claude/settings.json` → `hooks` 字段，针对每个事件注入 command hook：
    ```json
    {
-     "__claude_monitor__": { "installed": true, "installedAt": "..." },
+     "__aicoding_bar__": { "installed": true, "installedAt": "..." },
      "hooks": {
        "SessionStart": [
          { "matcher": "", "hooks": [
@@ -138,9 +138,9 @@ Claude Code 的 `AskUserQuestion` 工具触发 `Elicitation` 事件，映射到 
 
 - **端口范围**：23333 → 23337（依次尝试，与 clawd-on-desk 共存时自动错开）
 - **路由**：
-  - `GET /state` → 健康检查，返回 `{"ok":true,"app":"claude-monitor","port":N}`
+  - `GET /state` → 健康检查，返回 `{"ok":true,"app":"aicoding-bar","port":N}`
   - `POST /state` → 接收状态事件，调用 `StateEngine.ProcessEvent()`
-- **端口发现**：启动时将实际端口写入 `~/.clawd-monitor/runtime.json`，hook 脚本从此文件读取
+- **端口发现**：启动时将实际端口写入 `~/.aicoding-bar/runtime.json`，hook 脚本从此文件读取
 
 ### 3.5 进程探活 + 死 Session 清理
 
@@ -456,11 +456,11 @@ PermissionRequest    → notification (通过 /permission 端点)
 | 文件 | 内容 | 写入者 | 读取者 |
 |------|------|--------|--------|
 | `~/.claud-monitor/config.json` | 用户配置（端口、显示模式、字体、映射表） | ConfigManager.Save() | ConfigManager.Load() |
-| `~/.clawd-monitor/runtime.json` | `{"port": 23333}` | HttpStateServer.StartAsync() | claude-status-hook.js |
+| `~/.aicoding-bar/runtime.json` | `{"port": 23333}` | HttpStateServer.StartAsync() | claude-status-hook.js |
 
 ### 7.2 Hook 安装标记
 
-`~/.claude/settings.json` 中通过 `__claude_monitor__` 字段标识已安装。`HookInstaller.cs:15-22` 检查此标记判断 hook 是否已安装。
+`~/.claude/settings.json` 中通过 `__aicoding_bar__` 字段标识已安装。`HookInstaller.cs:15-22` 检查此标记判断 hook 是否已安装。
 
 ---
 

@@ -105,7 +105,7 @@ public class Config
 public static class ConfigManager
 {
     private static readonly string ConfigDir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".clawd-monitor");
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".aicoding-bar");
     private static readonly string ConfigPath = Path.Combine(ConfigDir, "config.json");
     private static readonly string RuntimePath = Path.Combine(ConfigDir, "runtime.json");
 
@@ -708,8 +708,8 @@ public class TaskbarWindow : IDisposable
         var sessions = _engine.Sessions.Values.OrderBy(s => s.SortIndex).ToList();
         if (sessions.Count == 0)
         {
-            _segments.Add(("Claude --", GdiColor.White));
-            return "Claude --";
+            _segments.Add(("--", GdiColor.White));
+            return "--";
         }
         if (sessions.Count > _config.Taskbar.AutoSwitchThreshold) return BuildAggregateText();
 
@@ -748,8 +748,8 @@ public class TaskbarWindow : IDisposable
         }
         if (sb.Length == 0)
         {
-            _segments.Add(("Claude --", GdiColor.White));
-            return "Claude --";
+            _segments.Add(("--", GdiColor.White));
+            return "--";
         }
         return sb.ToString();
     }
@@ -760,8 +760,8 @@ public class TaskbarWindow : IDisposable
         var sessions = _engine.Sessions.Values.OrderByDescending(s => s.LastUpdateAt).ToList();
         if (sessions.Count == 0)
         {
-            _segments.Add(("Claude --", GdiColor.White));
-            return "Claude --";
+            _segments.Add(("--", GdiColor.White));
+            return "--";
         }
         var latest = sessions[0];
         var name = GetStatusLabel(latest.Status);
@@ -974,7 +974,7 @@ class Program
     static async Task<int> Main(string[] args)
     {
         // Single instance
-        _mutex = new Mutex(true, @"Global\ClaudeMonitor", out var owned);
+        _mutex = new Mutex(true, @"Global\\AiCodingBar", out var owned);
         if (!owned)
         {
             Console.WriteLine("taskbar-monitor is already running.");
@@ -1005,7 +1005,7 @@ class Program
         _server.OnLog += msg => Console.WriteLine($"  [{DateTime.Now:HH:mm:ss}] {msg}");
         await _server.StartAsync();
         Console.WriteLine($"Listening on http://127.0.0.1:{_server.Port}/state");
-        Console.WriteLine($"Runtime port written to ~/.clawd-monitor/runtime.json");
+        Console.WriteLine($"Runtime port written to ~/.aicoding-bar/runtime.json");
 
         // Taskbar window
         _taskbar = new TaskbarWindow(_engine, _config);
@@ -1241,7 +1241,7 @@ class Program
         Console.WriteLine($"  Sessions: {_engine.Sessions.Count}");
         foreach (var s in _engine.Sessions.Values.OrderBy(s => s.SortIndex))
             Console.WriteLine($"    [{s.SortIndex}] {s.SessionId} -> {s.Status} (event: {s.LastEvent})");
-        Console.WriteLine($"  Config: ~/.clawd-monitor/config.json");
+        Console.WriteLine($"  Config: ~/.aicoding-bar/config.json");
         Console.WriteLine();
     }
 

@@ -9,7 +9,7 @@ public static class HookInstaller
     private static readonly string ClaudeSettingsDir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".claude");
     private static readonly string SettingsPath = Path.Combine(ClaudeSettingsDir, "settings.json");
-    private const string MarkerKey = "__claude_monitor__";
+    private const string MarkerKey = "__aicoding_bar__";
 
     public static bool IsInstalled()
     {

@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const RUNTIME_DIR = path.join(os.homedir(), ".clawd-monitor");
+const RUNTIME_DIR = path.join(os.homedir(), ".aicoding-bar");
 const RUNTIME_FILE = path.join(RUNTIME_DIR, "runtime.json");
 
 const EVENT_TO_STATE = {

@@ -120,7 +120,7 @@ Dashboard 窗口包含三个标签页：
 
 ## 配置
 
-配置文件路径：`~/.clawd-monitor/config.json`
+配置文件路径：`~/.aicoding-bar/config.json`
 
 首次运行时自动创建。示例：
 
@@ -151,7 +151,7 @@ Dashboard 窗口包含三个标签页：
 }
 ```
 
-运行时端口写入 `~/.clawd-monitor/runtime.json`，供 Hook 脚本自动发现。
+运行时端口写入 `~/.aicoding-bar/runtime.json`，供 Hook 脚本自动发现。
 
 ## 工作原理
 
@@ -188,7 +188,7 @@ node install.js uninstall
 
 1. 退出程序（右键托盘图标 → Exit）
 2. 删除 `claude-monitor` 目录
-3. 可选：删除配置目录 `~/.clawd-monitor/`
+3. 可选：删除配置目录 `~/.aicoding-bar/`
 
 ## 常见问题
 
@@ -199,12 +199,12 @@ node install.js uninstall
 
 **Hook 不工作：**
 - 确认 Node.js 已安装：`node --version`
-- 检查 `~/.claude/settings.json` 中是否有 `__claude_monitor__` 键
+- 检查 `~/.claude/settings.json` 中是否有 `__aicoding_bar__` 键
 - 手动重新安装 Hook：`node hooks/install.js install`
 
 **端口冲突：**
 - 默认尝试端口 23400-23404
-- 查看 `~/.clawd-monitor/runtime.json` 获取实际使用的端口
+- 查看 `~/.aicoding-bar/runtime.json` 获取实际使用的端口
 - 在配置中修改 `startPort` / `endPort`
 
 ## 技术栈

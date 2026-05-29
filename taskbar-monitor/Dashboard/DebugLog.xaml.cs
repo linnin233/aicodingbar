@@ -31,7 +31,7 @@ public partial class DebugLog : UserControl
 
         Log("=== TaskbarMonitor Debug Log ===", GrayBrush);
         Log($"HTTP Server: http://127.0.0.1:{ConfigManager.ReadRuntimePort()} (port from runtime.json)", CyanBrush);
-        Log($"Config dir: ~/.clawd-monitor/", GrayBrush);
+        Log($"Config dir: ~/.aicoding-bar/", GrayBrush);
         Log($"Hook installed: {HookInstaller.IsInstalled()}", HookInstaller.IsInstalled() ? GreenBrush : YellowBrush);
         Log($"Sessions tracked: {_engine.Sessions.Count}", GrayBrush);
         Log("---", GrayBrush);
