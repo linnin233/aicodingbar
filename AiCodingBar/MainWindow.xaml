@@ -89,12 +89,12 @@
                          Background="Transparent"
                          BorderThickness="0"
                          SelectionChanged="Sidebar_SelectionChanged">
-                    <ListBoxItem Tag="sessions">&#x1F4CA; Sessions</ListBoxItem>
-                    <ListBoxItem Tag="display">&#x2699; Display</ListBoxItem>
-                    <ListBoxItem Tag="agents">&#x1F916; Agents</ListBoxItem>
-                    <ListBoxItem Tag="states">&#x1F3A8; States</ListBoxItem>
-                    <ListBoxItem Tag="server">&#x1F527; Server</ListBoxItem>
-                    <ListBoxItem Tag="logs">&#x1F4CB; Logs</ListBoxItem>
+                    <ListBoxItem Tag="sessions">📊 会话</ListBoxItem>
+                    <ListBoxItem Tag="display">⚙ 显示</ListBoxItem>
+                    <ListBoxItem Tag="agents">🤖 代理</ListBoxItem>
+                    <ListBoxItem Tag="states">🎨 状态</ListBoxItem>
+                    <ListBoxItem Tag="server">🔧 服务</ListBoxItem>
+                    <ListBoxItem Tag="logs">📋 日志</ListBoxItem>
                 </ListBox>
 
                 <!-- 底部版本号 -->

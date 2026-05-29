@@ -36,7 +36,7 @@ public class TrayIcon : IDisposable
 
         var menu = new ContextMenuStrip();
 
-        var statusItem = new ToolStripMenuItem("暂无 session");
+        var statusItem = new ToolStripMenuItem("暂无会话");
         statusItem.Enabled = false;
         menu.Items.Add(statusItem);
 
@@ -76,8 +76,8 @@ public class TrayIcon : IDisposable
             if (_notifyIcon == null) return;
             var count = _engine.Sessions.Count;
             var activeCount = _engine.Sessions.Values.Count(s => s.Status != "sleeping");
-            _notifyIcon.Text = $"AiCodingBar - {activeCount} active / {count} total";
-            statusItem.Text = $"{activeCount} active / {count} total sessions";
+            _notifyIcon.Text = $"AiCodingBar - 活跃 {activeCount} / 总计 {count}";
+            statusItem.Text = $"活跃 {activeCount} / 总计 {count}";
         };
     }
 

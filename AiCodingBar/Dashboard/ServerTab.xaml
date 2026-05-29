@@ -12,12 +12,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Server Settings" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
-        <TextBlock Grid.Row="0" Text="HTTP server and auto-install configuration" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
+        <TextBlock Grid.Row="0" Text="服务设置" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="0" Text="HTTP 服务器和自动安装策略" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
 
         <!-- HTTP Server -->
         <StackPanel Grid.Row="1">
-            <TextBlock Text="HTTP SERVER" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,0,0,4"/>
+            <TextBlock Text="HTTP 服务" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,0,0,4"/>
             <Separator/>
 
             <Grid Margin="0,8">
@@ -26,8 +26,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Port Range"/>
-                    <TextBlock Text="Scans start → end for available" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="端口范围"/>
+                    <TextBlock Text="启动时依次尝试每个端口" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <TextBox x:Name="StartPortBox" Width="60"/>
@@ -41,14 +41,14 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Current Port" VerticalAlignment="Center"/>
+                <TextBlock Text="当前端口" VerticalAlignment="Center"/>
                 <TextBlock x:Name="CurrentPortText" Grid.Column="1" FontWeight="SemiBold" Foreground="#0078D4"/>
             </Grid>
         </StackPanel>
 
         <!-- 自动安装 -->
         <StackPanel Grid.Row="2">
-            <TextBlock Text="AUTO INSTALL" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
+            <TextBlock Text="自动安装" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
             <Separator/>
 
             <Grid Margin="0,8">
@@ -57,8 +57,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Auto-install Hooks"/>
-                    <TextBlock Text="On startup, inject into Claude Code" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="自动安装 Hook"/>
+                    <TextBlock Text="启动时注入到 Claude Code" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <CheckBox x:Name="AutoInstallHooksCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
@@ -69,15 +69,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Auto-install Plugin"/>
-                    <TextBlock Text="On startup, register in opencode" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="自动安装插件"/>
+                    <TextBlock Text="启动时注册到 opencode" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <CheckBox x:Name="AutoInstallPluginCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
 
             <!-- 操作 -->
             <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                <Button x:Name="SaveBtn" Content="Save Settings" Width="120" Padding="8,4"
+                <Button x:Name="SaveBtn" Content="保存设置" Width="120" Padding="8,4"
                         Background="#0078D4" Foreground="White" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>
             <TextBlock x:Name="StatusText" FontSize="12" Foreground="#888" Margin="0,8,0,0"/>

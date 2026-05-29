@@ -13,21 +13,21 @@
         </Grid.RowDefinitions>
 
         <!-- 标题 -->
-        <TextBlock Grid.Row="0" Text="Display Settings" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
-        <TextBlock Grid.Row="0" Text="Taskbar overlay appearance and behavior" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
+        <TextBlock Grid.Row="0" Text="显示设置" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="0" Text="自定义任务栏叠加文字的外观和行为" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
 
         <!-- ─ 显示模式 ─ -->
         <StackPanel Grid.Row="1">
-            <TextBlock Text="TASKBAR DISPLAY" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,12,0,4"/>
+            <TextBlock Text="任务栏显示" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,12,0,4"/>
             <Separator/>
 
-            <!-- 模式选择 -->
+            <!-- 模式 -->
             <Grid Margin="0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Display Mode" VerticalAlignment="Center"/>
+                <TextBlock Text="显示模式" VerticalAlignment="Center"/>
                 <ComboBox x:Name="ModeCombo" Grid.Column="1" Width="160" HorizontalAlignment="Left">
                     <ComboBoxItem>compact</ComboBoxItem>
                     <ComboBoxItem>aggregate</ComboBoxItem>
@@ -42,8 +42,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Dual Line Mode"/>
-                    <TextBlock Text="Show aggregate + detail" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="双行模式"/>
+                    <TextBlock Text="上方聚合摘要 + 下方逐条详情" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <CheckBox x:Name="ShowLine2Check" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
@@ -55,8 +55,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Max Sessions (Line 2)"/>
-                    <TextBlock Text="Detail rows before truncate" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="第二行最大数"/>
+                    <TextBlock Text="超出则截断显示" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <TextBox x:Name="Line2MaxBox" Grid.Column="1" Width="60" HorizontalAlignment="Left"/>
             </Grid>
@@ -67,7 +67,7 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Show Duration" VerticalAlignment="Center"/>
+                <TextBlock Text="显示持续时间" VerticalAlignment="Center"/>
                 <CheckBox x:Name="ShowDurationCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
 
@@ -77,7 +77,7 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Show Zero Counts" VerticalAlignment="Center"/>
+                <TextBlock Text="聚合模式显示零值" VerticalAlignment="Center"/>
                 <CheckBox x:Name="ShowZeroCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
 
@@ -88,8 +88,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Auto-Switch Threshold"/>
-                    <TextBlock Text="Switch to aggregate at N sessions" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="自动切换阈值"/>
+                    <TextBlock Text="会话数超过该值自动切聚合模式" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <TextBox x:Name="ThresholdBox" Grid.Column="1" Width="60" HorizontalAlignment="Left"/>
             </Grid>
@@ -97,7 +97,7 @@
 
         <!-- ─ 字体 ─ -->
         <StackPanel Grid.Row="2">
-            <TextBlock Text="FONT" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
+            <TextBlock Text="字体" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
             <Separator/>
 
             <Grid Margin="0,8">
@@ -105,7 +105,7 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Font Name" VerticalAlignment="Center"/>
+                <TextBlock Text="字体名称" VerticalAlignment="Center"/>
                 <TextBox x:Name="FontNameBox" Grid.Column="1" Width="180" HorizontalAlignment="Left"/>
             </Grid>
 
@@ -114,7 +114,7 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Font Size (pt)" VerticalAlignment="Center"/>
+                <TextBlock Text="字号 (pt)" VerticalAlignment="Center"/>
                 <TextBox x:Name="FontSizeBox" Grid.Column="1" Width="60" HorizontalAlignment="Left"/>
             </Grid>
 
@@ -124,17 +124,17 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Auto Font Size"/>
-                    <TextBlock Text="Scale to taskbar height" FontSize="11" Foreground="#888"/>
+                    <TextBlock Text="自动字号"/>
+                    <TextBlock Text="根据任务栏高度自动缩放" FontSize="11" Foreground="#888"/>
                 </StackPanel>
                 <CheckBox x:Name="AutoFontCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
             </Grid>
 
             <!-- 操作按钮 -->
             <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                <Button x:Name="SaveBtn" Content="Save Settings" Width="120" Padding="8,4"
+                <Button x:Name="SaveBtn" Content="保存设置" Width="120" Padding="8,4"
                         Background="#0078D4" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                <Button x:Name="ResetBtn" Content="Reset Defaults" Width="120" Padding="8,4"
+                <Button x:Name="ResetBtn" Content="恢复默认" Width="120" Padding="8,4"
                         Margin="8,0,0,0" Cursor="Hand"/>
             </StackPanel>
 

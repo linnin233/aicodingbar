@@ -52,7 +52,7 @@ public partial class DisplayTab : UserControl
 
         _config.Save();
         _taskbarText.Refresh();
-        StatusText.Text = "Saved ✓";
+        StatusText.Text = "已保存 ✓";
     }
 
     private void ResetConfig()
@@ -61,6 +61,6 @@ public partial class DisplayTab : UserControl
         _config.Save();
         LoadConfig();
         _taskbarText.Refresh();
-        StatusText.Text = "Reset to defaults ✓";
+        StatusText.Text = "已恢复默认 ✓";
     }
 }

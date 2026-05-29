@@ -47,12 +47,12 @@ public partial class AgentsTab : UserControl
 
             // Hook 状态标签
             var hookStatus = agent.AgentId == "claude-code"
-                ? (HookInstaller.IsInstalled() ? "hook" : "not installed")
+                ? (HookInstaller.IsInstalled() ? "hook" : "未安装")
                 : agent.AgentId == "opencode"
-                    ? (HookInstaller.IsOpencodePluginInstalled() ? "plugin" : "not installed")
+                    ? (HookInstaller.IsOpencodePluginInstalled() ? "plugin" : "未安装")
                     : "";
 
-            var hookColor = hookStatus.Contains("not") ? "#E04040" : "#00A040";
+            var hookColor = hookStatus.Contains("未") ? "#E04040" : "#00A040";
 
             // Master toggle + badge 标题
             var headerPanel = new Grid { Margin = new Thickness(0) };
@@ -109,7 +109,7 @@ public partial class AgentsTab : UserControl
                 var permToggle = new CheckBox
                 {
                     Style = (Style)FindResource("ToggleSwitch"),
-                    Content = agent.AgentId == "claude-code" ? "Show permission status" : "Permission handling",
+                    Content = agent.AgentId == "claude-code" ? "显示权限状态" : "权限处理",
                     IsChecked = agent.PermissionsEnabled,
                     IsEnabled = agent.Enabled,
                     Tag = $"{agent.AgentId}:perms",
@@ -125,7 +125,7 @@ public partial class AgentsTab : UserControl
                 var notifToggle = new CheckBox
                 {
                     Style = (Style)FindResource("ToggleSwitch"),
-                    Content = "Show notification / question",
+                    Content = "显示通知 / 提问",
                     IsChecked = agent.NotificationHookEnabled,
                     IsEnabled = agent.Enabled,
                     Tag = $"{agent.AgentId}:notif",
@@ -140,12 +140,12 @@ public partial class AgentsTab : UserControl
             var actionRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 4, 0, 0) };
             if (agent.AgentId == "claude-code")
             {
-                actionRow.Children.Add(CreateActionButton("Install Claude Hooks", async () =>
+                actionRow.Children.Add(CreateActionButton("安装 Claude Hook", async () =>
                 {
                     await HookInstaller.InstallAsync();
                     _taskbarText.Refresh();
                 }));
-                actionRow.Children.Add(CreateActionButton("Uninstall", async () =>
+                actionRow.Children.Add(CreateActionButton("卸载 Hook", async () =>
                 {
                     await HookInstaller.UninstallAsync();
                     _taskbarText.Refresh();
@@ -153,7 +153,7 @@ public partial class AgentsTab : UserControl
             }
             else if (agent.AgentId == "opencode")
             {
-                actionRow.Children.Add(CreateActionButton("Register opencode plugin", async () =>
+                actionRow.Children.Add(CreateActionButton("注册 opencode 插件", async () =>
                 {
                     await HookInstaller.InstallOpencodePluginAsync();
                     _taskbarText.Refresh();

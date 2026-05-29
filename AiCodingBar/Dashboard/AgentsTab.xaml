@@ -12,8 +12,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Agents" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
-        <TextBlock Grid.Row="1" Text="Enable or disable AI agent monitoring" FontSize="12" Foreground="#888888" Margin="0,0,0,16"/>
+        <TextBlock Grid.Row="0" Text="代理管理" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="1" Text="启用或禁用各个 AI 代理的状态监控" FontSize="12" Foreground="#888888" Margin="0,0,0,16"/>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <StackPanel x:Name="AgentsStack"/>

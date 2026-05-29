@@ -37,6 +37,6 @@ public partial class ServerTab : UserControl
         _config.Current.AutoInstallPlugin = AutoInstallPluginCheck.IsChecked == true;
 
         _config.Save();
-        StatusText.Text = "Saved. Restart to apply port changes.";
+        StatusText.Text = "已保存。端口变更需重启后生效。";
     }
 }
