@@ -21,7 +21,10 @@ public class HookInstaller
             if (!File.Exists(SettingsPath)) return false;
             var json = File.ReadAllText(SettingsPath);
             using var doc = JsonDocument.Parse(json);
-            return doc.RootElement.TryGetProperty(MarkerKey, out _);
+
+            // 检查新 marker (__aicoding_bar__) 或旧 marker (__claude_monitor__)
+            return doc.RootElement.TryGetProperty(MarkerKey, out _)
+                || doc.RootElement.TryGetProperty("__claude_monitor__", out _);
         }
         catch { return false; }
     }
@@ -48,7 +51,7 @@ public class HookInstaller
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
         ".config", "opencode");
     private static readonly string OpencodeConfigPath = Path.Combine(OpencodeConfigDir, "opencode.json");
-    private const string OpencodePluginName = "aicoding-bar";
+    private const string OpencodePluginName = "opencode-plugin";
 
     public static bool IsOpencodePluginInstalled()
     {
