@@ -56,32 +56,19 @@ public partial class MainWindow : Window
 
     private void Sidebar_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ContentStack.Children.Clear();
-
         var item = SidebarList.SelectedItem as ListBoxItem;
         var tag = item?.Tag?.ToString() ?? "sessions";
 
-        switch (tag)
+        ContentArea.Content = tag switch
         {
-            case "sessions":
-                ContentStack.Children.Add(_sessionGrid);
-                break;
-            case "display":
-                ContentStack.Children.Add(_displayTab);
-                break;
-            case "agents":
-                ContentStack.Children.Add(_agentsTab);
-                break;
-            case "states":
-                ContentStack.Children.Add(_statesTab);
-                break;
-            case "server":
-                ContentStack.Children.Add(_serverTab);
-                break;
-            case "logs":
-                ContentStack.Children.Add(_debugLog);
-                break;
-        }
+            "sessions" => _sessionGrid,
+            "display"  => _displayTab,
+            "agents"   => _agentsTab,
+            "states"   => _statesTab,
+            "server"   => _serverTab,
+            "logs"     => _debugLog,
+            _          => _sessionGrid,
+        };
     }
 
     private void Window_Deactivated(object? sender, EventArgs e)

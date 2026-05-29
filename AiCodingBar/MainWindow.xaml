@@ -107,11 +107,10 @@
         </Border>
 
         <!-- ── 内容区 ── -->
-        <Border Grid.Column="1" Background="White">
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          Padding="20,16">
-                <StackPanel x:Name="ContentStack"/>
-            </ScrollViewer>
+        <Border Grid.Column="1" Background="White" Padding="20,16">
+            <ContentControl x:Name="ContentArea"
+                            VerticalContentAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"/>
         </Border>
     </Grid>
 </Window>
