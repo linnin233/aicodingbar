@@ -1,0 +1,8 @@
+{
+  "name": "aicoding-bar",
+  "version": "0.1.0",
+  "description": "AiCodingBar opencode plugin — forwards session/tool events to the AiCodingBar HTTP server for taskbar status display",
+  "type": "module",
+  "main": "index.mjs",
+  "engines": { "node": ">=18" }
+}

@@ -1,5 +1,6 @@
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using AiCodingBar.Config;
@@ -7,12 +8,12 @@ using AiCodingBar.Config;
 namespace AiCodingBar.Server;
 
 /// <summary>
-/// HTTP 状态服务 — 对齐 clawd-on-desk src/server.js
+/// HTTP 状态服务
 ///
 /// 路由：
 ///   GET  /state      — 健康检查
-///   POST /state      — 状态事件（command hook → 非阻塞）
-///   POST /permission — 权限请求事件（HTTP hook → 阻塞等待 Claude Code）
+///   POST /state      — 状态事件（Claude Code command hook + opencode plugin）
+///   POST /permission — 权限请求事件（CC 阻塞 HTTP hook + opencode bridge forward）
 /// </summary>
 public class HttpStateServer
 {
@@ -21,6 +22,9 @@ public class HttpStateServer
     private HttpListener? _listener;
     private CancellationTokenSource? _cts;
     private int _actualPort;
+
+    // HTTP client 用于回写 opencode permission bridge
+    private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(3) };
 
     public int Port => _actualPort;
 
@@ -70,7 +74,7 @@ public class HttpStateServer
     {
         var req = ctx.Request;
         var resp = ctx.Response;
-        resp.Headers.Add("X-aicoding-bar", "aicoding-bar");
+        resp.Headers.Add("X-AiCoding-Bar", "aicoding-bar");
 
         try
         {
@@ -80,18 +84,18 @@ public class HttpStateServer
             if (req.HttpMethod == "GET" && path == "/state")
             {
                 var ok = Encoding.UTF8.GetBytes(
-                    $"{{\"ok\":true,\"app\":\"claude-monitor\",\"port\":{_actualPort}}}");
+                    $"{{\"ok\":true,\"app\":\"aicoding-bar\",\"port\":{_actualPort}}}");
                 resp.ContentType = "application/json";
                 await resp.OutputStream.WriteAsync(ok);
                 resp.StatusCode = 200;
                 OnLog?.Invoke($"GET /state -> 200 OK");
             }
-            // ── POST /state — 状态事件（command hook）──
+            // ── POST /state — 状态事件 ──
             else if (req.HttpMethod == "POST" && path == "/state")
             {
                 await HandleStatePost(req, resp);
             }
-            // ── POST /permission — 权限请求事件（HTTP hook，阻塞式）──
+            // ── POST /permission — 权限请求事件 ──
             else if (req.HttpMethod == "POST" && path == "/permission")
             {
                 await HandlePermissionPost(req, resp);
@@ -114,7 +118,7 @@ public class HttpStateServer
     }
 
     /// <summary>
-    /// 处理 POST /state — 非阻塞状态上报警告
+    /// 处理 POST /state — 非阻塞状态上报
     /// </summary>
     private async Task HandleStatePost(HttpListenerRequest req, HttpListenerResponse resp)
     {
@@ -134,11 +138,12 @@ public class HttpStateServer
     }
 
     /// <summary>
-    /// 处理 POST /permission — 权限请求事件（阻塞式 HTTP hook from Claude Code）
-    /// 参考 clawd-on-desk src/server-route-permission.js
+    /// 处理 POST /permission — 权限请求事件
     ///
-    /// Claude Code 的 PermissionRequest hook 会阻塞等待 HTTP 响应。
-    /// 这里不阻塞 Claude Code：立即返回 allow，由 Claude Code 自行处理审批。
+    /// 两种来源：
+    /// 1. Claude Code — 阻塞 HTTP hook，立即返回 allow
+    /// 2. opencode plugin — fire-and-forget POST，带 bridge_url/bridge_token，
+    ///    回复后 fire-and-forget POST 到 bridge 回写决策
     /// </summary>
     private async Task HandlePermissionPost(HttpListenerRequest req, HttpListenerResponse resp)
     {
@@ -155,23 +160,64 @@ public class HttpStateServer
             return;
         }
 
-        var sessionId = doc.RootElement.TryGetProperty("session_id", out var sid)
+        var root = doc.RootElement;
+        var sessionId = root.TryGetProperty("session_id", out var sid)
             ? sid.GetString() ?? "default"
             : "default";
-        var toolName = doc.RootElement.TryGetProperty("tool_name", out var tn)
+        var toolName = root.TryGetProperty("tool_name", out var tn)
             ? tn.GetString()
+            : null;
+        var agentId = root.TryGetProperty("agent_id", out var aid)
+            ? aid.GetString()
             : null;
 
         // 更新状态机 → "权限" 状态
-        _engine.ProcessPermissionRequest(doc.RootElement);
+        _engine.ProcessPermissionRequest(root);
 
-        // 返回 allow 给 Claude Code（不阻塞）
+        // 立即返回（不阻塞）
         resp.StatusCode = 200;
         resp.ContentType = "application/json";
         var response = Encoding.UTF8.GetBytes("{\"ok\":true,\"decision\":\"allow\"}");
         await resp.OutputStream.WriteAsync(response);
 
-        OnLog?.Invoke($"POST /permission -> 200 OK (session={sessionId}, tool={toolName})");
+        OnLog?.Invoke($"POST /permission -> 200 OK (agent={agentId}, session={sessionId}, tool={toolName})");
+
+        // opencode: 有 bridge URL → 异步回写决策到 plugin 的 reverse bridge
+        var bridgeUrl = root.TryGetProperty("bridge_url", out var bu) ? bu.GetString() : null;
+        var bridgeToken = root.TryGetProperty("bridge_token", out var bt) ? bt.GetString() : null;
+        var requestId = root.TryGetProperty("request_id", out var rid) ? rid.GetString() : null;
+
+        if (!string.IsNullOrEmpty(bridgeUrl) && !string.IsNullOrEmpty(bridgeToken) && !string.IsNullOrEmpty(requestId))
+        {
+            _ = PostOpencodeReplyAsync(bridgeUrl, bridgeToken, requestId);
+        }
+    }
+
+    /// <summary>
+    /// 向 opencode plugin 的 reverse bridge POST 权限决策。
+    /// Fire-and-forget — 不等待结果。
+    /// </summary>
+    private async Task PostOpencodeReplyAsync(string bridgeUrl, string bridgeToken, string requestId)
+    {
+        try
+        {
+            var payload = new { request_id = requestId, reply = "once" };
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var msg = new HttpRequestMessage(HttpMethod.Post, $"{bridgeUrl.TrimEnd('/')}/reply")
+            {
+                Content = content
+            };
+            msg.Headers.Add("Authorization", $"Bearer {bridgeToken}");
+
+            var result = await _httpClient.SendAsync(msg);
+            OnLog?.Invoke($"[opencode] Bridge reply -> {(int)result.StatusCode} (req={requestId})");
+        }
+        catch (Exception ex)
+        {
+            OnLog?.Invoke($"[opencode] Bridge reply failed: {ex.Message}");
+        }
     }
 
     private Task<int> FindAvailablePort()

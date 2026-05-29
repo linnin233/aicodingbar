@@ -47,6 +47,12 @@ public partial class App : Application
 
             _ = HookInstaller.EnsureInstalledAsync();
 
+            // 尝试安装 opencode plugin（静默，不阻塞启动）
+            _ = HookInstaller.EnsureOpencodePluginInstalledAsync().ContinueWith(t =>
+            {
+                ServerLog(t.Result ? "[opencode] Plugin 已注册" : "[opencode] opencode 未安装或注册失败");
+            });
+
             // 任务栏文字叠加层（Win32 子窗口嵌入）
             _taskbarText = new NativeTaskbarText(_engine, _config);
             _taskbarText.OnDebugLog += ServerLog;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// ClaudeMonitor — Claude Code Status Hook
+// AiCodingBar — Claude Code Status Hook
 // Usage: node claude-status-hook.js <event_name>
-// Reads stdin JSON from Claude Code, POSTs state to ClaudeMonitor HTTP server
+// Reads stdin JSON from Claude Code, POSTs state to AiCodingBar HTTP server
 
 const http = require("http");
 const fs = require("fs");
