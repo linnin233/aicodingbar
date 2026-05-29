@@ -1,15 +1,165 @@
 <Window x:Class="AiCodingBar.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dashboard="clr-namespace:AiCodingBar.Dashboard"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="AiCodingBar" Height="500" Width="800"
+        Title="AiCodingBar" Height="540" Width="820"
         WindowStartupLocation="CenterScreen"
-        MinHeight="400" MinWidth="600">
-    <TabControl x:Name="MainTabControl">
-        <TabItem x:Name="SessionTab" Header="Session 列表"/>
-        <TabItem x:Name="ConfigTab" Header="配置"/>
-        <TabItem x:Name="DebugTab" Header="Debug"/>
-    </TabControl>
+        MinHeight="420" MinWidth="640"
+        Deactivated="Window_Deactivated"
+        Background="White">
+    <Window.Resources>
+        <!-- 侧边栏导航按钮样式 -->
+        <Style x:Key="SidebarNavItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="14,10,14,10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                Cursor="Hand">
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              TextBlock.Foreground="#333333"
+                                              TextBlock.FontSize="13"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4"/>
+                                <Setter Property="Foreground" Value="#0078D4"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#E8E8E8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ToggleSwitch 样式 (CheckBox 模拟) -->
+        <Style x:Key="ToggleSwitch" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="SwitchTrack"
+                                    Width="42" Height="22"
+                                    CornerRadius="11"
+                                    Background="#CCCCCC"
+                                    BorderBrush="#999999"
+                                    BorderThickness="1"/>
+                            <Border x:Name="SwitchThumb"
+                                    Width="16" Height="16"
+                                    CornerRadius="8"
+                                    Background="White"
+                                    HorizontalAlignment="Left"
+                                    Margin="3,0,0,0">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="1" Opacity="0.3" BlurRadius="2"/>
+                                </Border.Effect>
+                            </Border>
+                            <ContentPresenter Grid.Column="1"
+                                              Content="{TemplateBinding Content}"
+                                              VerticalAlignment="Center"
+                                              Margin="10,0,0,0"
+                                              TextBlock.FontSize="13"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Background" Value="#0078D4"/>
+                                <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="#0078D4"/>
+                                <Setter TargetName="SwitchThumb" Property="Margin" Value="23,0,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="SwitchTrack" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 标题样式 -->
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- 分隔线 -->
+        <Style x:Key="SectionDivider" TargetType="Separator">
+            <Setter Property="Margin" Value="0,8"/>
+            <Setter Property="Opacity" Value="0.3"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="168"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ── 侧边栏 ── -->
+        <Border Grid.Column="0" Background="#F5F5F5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- App 标题 -->
+                <TextBlock Grid.Row="0"
+                           Text="AiCodingBar"
+                           FontSize="14" FontWeight="Bold"
+                           Foreground="#333333"
+                           Margin="14,14,14,10"/>
+
+                <!-- 导航列表 -->
+                <ListBox x:Name="SidebarList"
+                         Grid.Row="1"
+                         ItemContainerStyle="{StaticResource SidebarNavItem}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         SelectionChanged="Sidebar_SelectionChanged">
+                    <ListBoxItem Tag="sessions">&#x1F4CA; Sessions</ListBoxItem>
+                    <ListBoxItem Tag="display">&#x2699; Display</ListBoxItem>
+                    <ListBoxItem Tag="agents">&#x1F916; Agents</ListBoxItem>
+                    <ListBoxItem Tag="states">&#x1F3A8; States</ListBoxItem>
+                    <ListBoxItem Tag="server">&#x1F527; Server</ListBoxItem>
+                    <ListBoxItem Tag="logs">&#x1F4CB; Logs</ListBoxItem>
+                </ListBox>
+
+                <!-- 底部版本号 -->
+                <TextBlock Grid.Row="2"
+                           Text="v0.2.0-Beta"
+                           FontSize="11"
+                           Foreground="#999999"
+                           Margin="14,10"/>
+            </Grid>
+        </Border>
+
+        <!-- ── 内容区 ── -->
+        <Border Grid.Column="1" Background="White">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Padding="20,16">
+                <StackPanel x:Name="ContentStack"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
 </Window>

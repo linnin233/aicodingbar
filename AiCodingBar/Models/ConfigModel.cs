@@ -7,6 +7,15 @@ public class ConfigModel
     public Dictionary<string, StateMapping> StateMapping { get; set; } = DefaultMappings();
     public List<string>? HookEvents { get; set; }
 
+    /// <summary>Per-agent 配置（claude-code / opencode / ...）</summary>
+    public Dictionary<string, AgentConfig> Agents { get; set; } = new();
+
+    /// <summary>启动时自动安装 Claude Code hooks</summary>
+    public bool AutoInstallHooks { get; set; } = true;
+
+    /// <summary>启动时自动安装 opencode plugin</summary>
+    public bool AutoInstallPlugin { get; set; } = true;
+
     /// <summary>
     /// clawd-on-desk 对齐的默认事件→状态映射表。
     /// 状态类型说明：
@@ -102,6 +111,19 @@ public class TaskbarConfig
 
     /// <summary>是否根据 taskbar 高度自动计算字体大小（双行模式推荐开启）</summary>
     public bool AutoFontSize { get; set; } = true;
+}
+
+public static class ConfigExtensions
+{
+    public static AgentConfig GetOrAdd(this Dictionary<string, AgentConfig> dict, string key, Func<AgentConfig> factory)
+    {
+        if (!dict.TryGetValue(key, out var value))
+        {
+            value = factory();
+            dict[key] = value;
+        }
+        return value;
+    }
 }
 
 /// <summary>

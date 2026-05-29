@@ -24,7 +24,7 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        _appMutex = new Mutex(true, @"Global\\AiCodingBar", out _ownsMutex);
+        _appMutex = new Mutex(true, @"Global\AiCodingBar", out _ownsMutex);
         if (!_ownsMutex)
         {
             MessageBox.Show("AiCodingBar 已在运行中", "AiCodingBar",

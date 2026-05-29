@@ -1,0 +1,86 @@
+<UserControl x:Class="AiCodingBar.Dashboard.ServerTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Server Settings" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="0" Text="HTTP server and auto-install configuration" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
+
+        <!-- HTTP Server -->
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="HTTP SERVER" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,0,0,4"/>
+            <Separator/>
+
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Port Range"/>
+                    <TextBlock Text="Scans start → end for available" FontSize="11" Foreground="#888"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBox x:Name="StartPortBox" Width="60"/>
+                    <TextBlock Text=" ~ " VerticalAlignment="Center" Margin="4,0"/>
+                    <TextBox x:Name="EndPortBox" Width="60"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Current Port" VerticalAlignment="Center"/>
+                <TextBlock x:Name="CurrentPortText" Grid.Column="1" FontWeight="SemiBold" Foreground="#0078D4"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 自动安装 -->
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="AUTO INSTALL" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
+            <Separator/>
+
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Auto-install Hooks"/>
+                    <TextBlock Text="On startup, inject into Claude Code" FontSize="11" Foreground="#888"/>
+                </StackPanel>
+                <CheckBox x:Name="AutoInstallHooksCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Auto-install Plugin"/>
+                    <TextBlock Text="On startup, register in opencode" FontSize="11" Foreground="#888"/>
+                </StackPanel>
+                <CheckBox x:Name="AutoInstallPluginCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- 操作 -->
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <Button x:Name="SaveBtn" Content="Save Settings" Width="120" Padding="8,4"
+                        Background="#0078D4" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            </StackPanel>
+            <TextBlock x:Name="StatusText" FontSize="12" Foreground="#888" Margin="0,8,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
