@@ -17,7 +17,7 @@ const HOOK_EVENTS = [
   "Stop", "StopFailure",
   "SubagentStart", "SubagentStop",
   "PreCompact", "PostCompact",
-  "Notification", "Elicitation",
+  "Notification", "Elicitation", "WorktreeCreate",
 ];
 
 const MONITOR_HOOK_KEY = "__claude_monitor__";

@@ -3,6 +3,7 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using ClaudeMonitor.Config;
+using ClaudeMonitor.Models;
 using ClaudeMonitor.Server;
 using GdiColor = System.Drawing.Color;
 
@@ -58,7 +59,8 @@ public class NativeTaskbarText : IDisposable
         _engine.OnAnyChange += Refresh;
         _engine.OnSessionUpdated += (session) =>
         {
-            if (session.Status == "attention")
+            // attention (完成) 和 blocking 状态 (permission/question) 闪烁提醒
+            if (session.Status == "attention" || session.IsBlocking)
                 StartFlash();
         };
         _taskbarCreatedMsg = RegisterWindowMessage("TaskbarCreated");
@@ -296,6 +298,8 @@ public class NativeTaskbarText : IDisposable
         if (sessions.Count > _config.Current.Taskbar.AutoSwitchThreshold) return BuildAggregateText();
 
         var sb = new System.Text.StringBuilder();
+        var showDuration = _config.Current.Taskbar.ShowDuration;
+
         for (int i = 0; i < sessions.Count; i++)
         {
             if (i > 0)
@@ -311,8 +315,35 @@ public class NativeTaskbarText : IDisposable
             sb.Append(s.SortIndex);
             sb.Append(':');
             sb.Append(name);
+
+            // 持续时间显示
+            if (showDuration)
+            {
+                var dur = FormatDuration(s.Duration);
+                _segments.Add((dur, GdiColor.Gray));
+                sb.Append(dur);
+            }
+
+            // 阻塞状态 + 工具名显示（如 "提问:Bash"）
+            if (s.IsBlocking && !string.IsNullOrEmpty(s.ToolName))
+            {
+                var cat = SessionState.GetToolCategory(s.ToolName);
+                if (!string.IsNullOrEmpty(cat) && cat != name)
+                {
+                    _segments.Add(($":{cat}", GdiColor.Gray));
+                    sb.Append($":{cat}");
+                }
+            }
         }
         return sb.ToString();
+    }
+
+    /// <summary>格式化持续时间为精简显示</summary>
+    private static string FormatDuration(TimeSpan d)
+    {
+        if (d.TotalHours >= 1) return $"[{d.Hours}h{d.Minutes}m]";
+        if (d.TotalMinutes >= 1) return $"[{d.Minutes}m]";
+        return $"[{d.Seconds}s]";
     }
 
     private string BuildAggregateText()

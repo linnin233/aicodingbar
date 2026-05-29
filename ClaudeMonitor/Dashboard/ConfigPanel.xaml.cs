@@ -66,6 +66,9 @@ public partial class ConfigPanel : UserControl
                     Name = kv.Value.Name,
                     Abbr = kv.Value.Abbr,
                     Color = kv.Value.Color,
+                    StateKind = kv.Value.StateKind,
+                    Priority = kv.Value.Priority,
+                    AutoReturnMs = kv.Value.AutoReturnMs,
                 })
             )
         );
