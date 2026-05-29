@@ -1,0 +1,331 @@
+<UserControl x:Class="TaskbarMonitor.Dashboard.SessionGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Padding="28,22,28,18" Background="#ffffff">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title row -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock x:Name="TitleText" Text="Sessions" FontSize="22" FontWeight="Bold" Foreground="#18181b"/>
+                    <Border Style="{StaticResource AccentPill}" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="CountText" Text="0" FontSize="11" FontWeight="Bold" Foreground="#d97757"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Filter row -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                    <RadioButton x:Name="FilterAll" Style="{StaticResource SidebarBtn}" Content="All"
+                                 Padding="10,5" IsChecked="True" Margin="0,0,4,0" FontSize="12"
+                                 GroupName="SessionFilter" Checked="FilterChanged"/>
+                    <RadioButton x:Name="FilterActive" Style="{StaticResource SidebarBtn}" Content="Active"
+                                 Padding="10,5" FontSize="12" Margin="0,0,4,0"
+                                 GroupName="SessionFilter" Checked="FilterChanged"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content area -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,8,24,24">
+            <StackPanel>
+                <!-- Aggregate Panel: status count cards -->
+                <WrapPanel x:Name="AggregatePanel" Visibility="Collapsed" Margin="0,0,0,8"/>
+
+                <!-- Highlight Card: featured session -->
+                <Border x:Name="HighlightCard" Style="{StaticResource Card}" Visibility="Collapsed"
+                        Padding="20,16" Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left: big status dot + index -->
+                        <StackPanel Grid.Column="0" Margin="0,0,18,0" VerticalAlignment="Center">
+                            <Ellipse x:Name="HlDot" Width="14" Height="14" Fill="#939399" Margin="0,0,0,6"/>
+                            <TextBlock x:Name="HlIndex" Text="0" FontSize="13" FontWeight="Bold"
+                                       Foreground="#18181b" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Middle: detailed info -->
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock x:Name="HlTitle" Grid.Row="0" FontSize="16" FontWeight="Bold"
+                                       Foreground="#18181b" Margin="0,0,0,6"/>
+
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4">
+                                <TextBlock x:Name="HlStatus" FontSize="13" Foreground="#d97757" FontWeight="600"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock x:Name="HlEvent" FontSize="13" Foreground="#6b6b70"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,2">
+                                <TextBlock x:Name="HlId" FontSize="11" Foreground="#939399" Margin="0,0,14,0"/>
+                                <TextBlock x:Name="HlTool" FontSize="11" Foreground="#939399" Margin="0,0,14,0"/>
+                                <TextBlock x:Name="HlCwd" FontSize="11" Foreground="#939399"/>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="3" FontSize="10" Foreground="#939399" Margin="0,4,0,0">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Updated: {0:HH:mm:ss}">
+                                        <Binding Path="LastUpdateAt"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid>
+
+                        <!-- Right: status badge -->
+                        <Border x:Name="HlBadge" Grid.Column="2" VerticalAlignment="Top"
+                                CornerRadius="999" Padding="10,4" Margin="8,0,0,0"
+                                Background="#14000000">
+                            <TextBlock x:Name="HlBadgeText" FontSize="11" FontWeight="600" Foreground="#6b6b70"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Session Cards List -->
+                <ItemsControl x:Name="SessionList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left: status dot + index -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,14,0" VerticalAlignment="Center">
+                                        <Ellipse Width="9" Height="9" Margin="0,0,0,6">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="#9ca3af"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="working">
+                                                            <Setter Property="Fill" Value="#16a34a"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="thinking">
+                                                            <Setter Property="Fill" Value="#6366f1"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="attention">
+                                                            <Setter Property="Fill" Value="#d97706"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="juggling">
+                                                            <Setter Property="Fill" Value="#b45309"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="sweeping">
+                                                            <Setter Property="Fill" Value="#52525b"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="notification">
+                                                            <Setter Property="Fill" Value="#b45309"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="error">
+                                                            <Setter Property="Fill" Value="#dc2626"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="carrying">
+                                                            <Setter Property="Fill" Value="#2563eb"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="complete">
+                                                            <Setter Property="Fill" Value="#71717a"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="idle">
+                                                            <Setter Property="Fill" Value="#9ca3af"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="sleeping">
+                                                            <Setter Property="Fill" Value="#9ca3af"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock Text="{Binding SortIndex}" FontSize="11" FontWeight="600"
+                                                   Foreground="#939399" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- Middle: info -->
+                                    <Grid Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" FontSize="13" FontWeight="600" Foreground="#18181b"
+                                                   Margin="0,0,0,3">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}">
+                                                    <Binding Path="SessionTitle" TargetNullValue="(no title)"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,2">
+                                            <TextBlock FontSize="12" Foreground="#d97757" FontWeight="600"
+                                                       Text="{Binding Status}" Margin="0,0,10,0"/>
+                                            <TextBlock FontSize="12" Foreground="#6b6b70"
+                                                       Text="{Binding LastEvent}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                            <TextBlock FontSize="11" Foreground="#939399" Margin="0,0,12,0">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="ID: {0}">
+                                                        <Binding Path="SessionId"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock FontSize="11" Foreground="#939399" Margin="0,0,12,0">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="Tool: {0}">
+                                                        <Binding Path="ToolName" TargetNullValue="--"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock FontSize="11" Foreground="#939399">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="CWD: {0}">
+                                                        <Binding Path="Cwd" TargetNullValue="--"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Right: status badge -->
+                                    <Border Grid.Column="2" VerticalAlignment="Top" CornerRadius="999"
+                                            Padding="8,3" Margin="8,0,0,0">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="#14000000"/>
+                                        </Border.Background>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="working">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1a16a34a"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="thinking">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1a6366f1"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="attention">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1ad97706"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="juggling">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1ab45309"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="error">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1adc2626"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="sweeping">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1a52525b"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="notification">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1ab45309"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="carrying">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="#1a2563eb"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock FontSize="10" FontWeight="600" Text="{Binding Status}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#6b6b70"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="working">
+                                                            <Setter Property="Foreground" Value="#16a34a"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="thinking">
+                                                            <Setter Property="Foreground" Value="#6366f1"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="attention">
+                                                            <Setter Property="Foreground" Value="#d97706"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="juggling">
+                                                            <Setter Property="Foreground" Value="#b45309"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="error">
+                                                            <Setter Property="Foreground" Value="#dc2626"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="sweeping">
+                                                            <Setter Property="Foreground" Value="#52525b"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="notification">
+                                                            <Setter Property="Foreground" Value="#b45309"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="carrying">
+                                                            <Setter Property="Foreground" Value="#2563eb"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -22,3 +22,5 @@ Desktop.ini
 ## Project specific
 UpgradeLog.htm
 Backup/
+publish/
+dist/

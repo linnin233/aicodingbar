@@ -1,0 +1,63 @@
+<Window x:Class="TaskbarMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ClaudeMonitor" Height="520" Width="820"
+        WindowStartupLocation="CenterScreen"
+        MinHeight="400" MinWidth="600"
+        Background="#f5f5f7">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dashboard/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="#ececef" Width="180" Padding="12,16">
+            <StackPanel>
+                <!-- Logo / Title -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="ClaudeMonitor" FontSize="15" FontWeight="Bold"
+                               Foreground="#18181b" Margin="4,0,0,4"/>
+                    <TextBlock Text="Taskbar Session Monitor" FontSize="11"
+                               Foreground="#6b6b70" Margin="4,0,0,0"/>
+                </StackPanel>
+
+                <!-- Nav items -->
+                <RadioButton x:Name="NavSessions" Style="{StaticResource SidebarBtn}"
+                             Content="  Sessions" IsChecked="True"
+                             Checked="Nav_Checked"/>
+                <RadioButton x:Name="NavConfig" Style="{StaticResource SidebarBtn}"
+                             Content="  Config"
+                             Checked="Nav_Checked"/>
+                <RadioButton x:Name="NavDebug" Style="{StaticResource SidebarBtn}"
+                             Content="  Debug Log"
+                             Checked="Nav_Checked"/>
+
+                <!-- Spacer -->
+                <Border Height="1" Background="#1a000000" Margin="8,16,8,12"/>
+
+                <!-- Status info -->
+                <StackPanel Margin="4,0,0,0">
+                    <TextBlock x:Name="ServerStatusText" Text="Server: --" FontSize="11"
+                               Foreground="#6b6b70" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="HookStatusText" Text="Hook: --" FontSize="11"
+                               Foreground="#6b6b70"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <Border Grid.Column="1" Background="#f5f5f7">
+            <Grid x:Name="ContentArea" Margin="0"/>
+        </Border>
+    </Grid>
+</Window>

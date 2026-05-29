@@ -1,0 +1,220 @@
+<UserControl x:Class="TaskbarMonitor.Dashboard.ConfigPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="28,22,28,24">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock x:Name="PageTitleText" Text="Config" Style="{StaticResource PageTitle}"/>
+            <TextBlock x:Name="PageSubText" Text="Customize taskbar display, state mappings, and hooks." Style="{StaticResource PageSubtitle}"/>
+
+            <!-- ═══ Language ═══ -->
+            <TextBlock x:Name="SecLangText" Text="LANGUAGE" Style="{StaticResource SectionTitle}"/>
+            <Border Style="{StaticResource SectionContainer}">
+                <StackPanel>
+                    <Border Padding="16,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="LangLabelText" Text="Language" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="LangDescText" Text="Interface language (restart for full effect)" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <ComboBox x:Name="LangCombo" Grid.Column="1" Width="130"
+                                      Style="{StaticResource AppComboBox}" SelectedIndex="0">
+                                <ComboBoxItem Content="中文"/>
+                                <ComboBoxItem Content="English"/>
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ Display Settings ═══ -->
+            <TextBlock x:Name="SecDisplayText" Text="DISPLAY" Style="{StaticResource SectionTitle}"/>
+            <Border Style="{StaticResource SectionContainer}">
+                <StackPanel>
+                    <!-- Mode row -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="ModeLabelText" Text="Display Mode" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="ModeDescText" Text="How multiple sessions are shown in the taskbar" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <ComboBox x:Name="ModeCombo" Grid.Column="1" Width="130"
+                                      Style="{StaticResource AppComboBox}" SelectedIndex="0">
+                                <ComboBoxItem>compact</ComboBoxItem>
+                                <ComboBoxItem>aggregate</ComboBoxItem>
+                                <ComboBoxItem>highlight</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+
+                    <!-- Show zero counts row -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="ZeroLabelText" Text="Show Zero Counts" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="ZeroDescText" Text="Display states with zero active sessions in aggregate mode" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ShowZeroCheckBox" Grid.Column="1"
+                                      Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Auto-switch threshold -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="ThresholdLabelText" Text="Auto-Switch Threshold" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="ThresholdDescText" Text="Switch to aggregate mode when sessions exceed this count" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <TextBox x:Name="ThresholdBox" Grid.Column="1" Width="60" Text="7"
+                                     Style="{StaticResource AppTextBox}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Font size row -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="FontLabelText" Text="Font Size" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="FontDescText" Text="Text size in the taskbar display (pt)" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <TextBox x:Name="FontSizeBox" Grid.Column="1" Width="60" Text="11"
+                                     Style="{StaticResource AppTextBox}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Spacing row -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="SpacingLabelText" Text="Segment Spacing" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="SpacingDescText" Text="Space between display segments (px)" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <TextBox x:Name="SpacingBox" Grid.Column="1" Width="60" Text="4"
+                                     Style="{StaticResource AppTextBox}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Padding X row -->
+                    <Border Style="{StaticResource SettingRow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="PadXLabelText" Text="Padding X" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="PadXDescText" Text="Horizontal padding inside the display area (px)" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <TextBox x:Name="PaddingXBox" Grid.Column="1" Width="60" Text="0"
+                                     Style="{StaticResource AppTextBox}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Padding Y row (last) -->
+                    <Border Padding="16,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="PadYLabelText" Text="Padding Y" Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="PadYDescText" Text="Vertical padding inside the display area (px)" Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <TextBox x:Name="PaddingYBox" Grid.Column="1" Width="60" Text="0"
+                                     Style="{StaticResource AppTextBox}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ State Mappings ═══ -->
+            <TextBlock x:Name="SecMappingText" Text="STATE MAPPINGS" Style="{StaticResource SectionTitle}"/>
+            <Border Style="{StaticResource SectionContainer}" Padding="12">
+                <DataGrid x:Name="MappingGrid"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          Background="#ffffff"
+                          BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Hook Event" Binding="{Binding Key}" Width="150" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding Value.State}" Width="80"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Value.Name}" Width="80"/>
+                        <DataGridTextColumn Header="Abbr" Binding="{Binding Value.Abbr}" Width="60"/>
+                        <DataGridTextColumn Header="Color" Binding="{Binding Value.Color}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- ═══ Actions ═══ -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                <Button x:Name="SaveBtn" Content="Save" Style="{StaticResource AccentBtn}" Margin="0,0,8,0"/>
+                <Button x:Name="ResetBtn" Content="Reset" Style="{StaticResource SoftBtn}"/>
+            </StackPanel>
+
+            <!-- ═══ Hook Management ═══ -->
+            <TextBlock x:Name="SecHooksText" Text="HOOKS" Style="{StaticResource SectionTitle}"/>
+            <Border Style="{StaticResource SectionContainer}">
+                <StackPanel>
+                    <Border Padding="16,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="HookStatusText" Text="Hook Status: checking..."
+                                           Style="{StaticResource RowLabel}"/>
+                                <TextBlock x:Name="HookDescText" Text="Claude Code hook integration for real-time session monitoring"
+                                           Style="{StaticResource RowDesc}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button x:Name="InstallHooksBtn" Content="Install"
+                                        Style="{StaticResource AccentBtn}" Margin="0,0,8,0"/>
+                                <Button x:Name="UninstallHooksBtn" Content="Uninstall"
+                                        Style="{StaticResource SoftBtn}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
