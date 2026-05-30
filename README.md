@@ -1,8 +1,12 @@
-# ClaudeMonitor
+# AiCodingBar
 
 [中文文档](README-zh.md)
 
-A Windows taskbar status indicator for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Displays real-time session states directly in the system taskbar — no terminal switching needed.
+A Windows taskbar status indicator for AI coding agents — [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [opencode](https://opencode.ai). Displays real-time session states directly in the system taskbar — no terminal switching needed.
+
+## Credits
+
+AiCodingBar is heavily inspired by and originally forked from [clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk) by [@rullerzhou-afk](https://github.com/rullerzhou-afk). The core monitoring architecture — hook-driven event collection, state engine, and stale session cleanup — follows clawd-on-desk's proven patterns. The Claude Code hook registration strategy (async/timeout hardening) was adopted from clawd-on-desk v0.8.1. We contribute back where possible — AiCodingBar's tray-flash-on-complete feature was merged into clawd-on-desk v0.8.1 ([#335](https://github.com/rullerzhou-afk/clawd-on-desk/pull/335)).
 
 ## Demo
 
@@ -44,35 +48,35 @@ The colored text label appears to the left of your system tray, showing per-sess
 
 ### Option 1: Download Release (Recommended)
 
-1. Go to [Releases](https://github.com/linnin233/claude-monitor/releases)
-2. Download the latest `ClaudeMonitor-vX.X.X.zip`
+1. Go to [Releases](https://github.com/linnin233/aicodingbar/releases)
+2. Download the latest `AiCodingBar-vX.X.X-Beta.zip`
 3. Extract to any folder
-4. Run `taskbar-monitor.exe`
+4. Run `AiCodingBar.exe`
 
 ### Option 2: Build from Source
 
 ```bash
 # Prerequisites: .NET 8.0 SDK + Node.js
-git clone https://github.com/linnin233/claude-monitor.git
-cd claude-monitor
+git clone https://github.com/linnin233/aicodingbar.git
+cd aicodingbar
 
 # Build
-dotnet build taskbar-monitor -c Release
+dotnet build AiCodingBar -c Release
 
 # Run directly
-dotnet run --project taskbar-monitor
+dotnet run --project AiCodingBar
 
 # Or publish as a single-file executable
-dotnet publish taskbar-monitor -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+dotnet publish AiCodingBar -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
-The published executable will be in `taskbar-monitor/bin/Release/net8.0-windows/win-x64/publish/`.
+The published executable will be in `AiCodingBar/bin/Release/net8.0-windows/win-x64/publish/`.
 
 ## Usage
 
 ### First Run
 
-1. Launch `taskbar-monitor.exe`
+1. Launch `AiCodingBar.exe`
 2. The app automatically installs Claude Code hooks into `~/.claude/settings.json`
 3. A colored status label appears in the taskbar (left of system tray)
 4. A tray icon appears with a right-click context menu
@@ -178,16 +182,16 @@ Windows Taskbar
 ### Remove Hooks
 
 ```bash
-cd claude-monitor/hooks
+cd aicodingbar/hooks
 node install.js uninstall
 ```
 
-This removes ClaudeMonitor entries from `~/.claude/settings.json` without affecting other hooks.
+This removes AiCodingBar entries from `~/.claude/settings.json` without affecting other hooks.
 
 ### Remove Application
 
 1. Exit the app (right-click tray icon → Exit)
-2. Delete the `claude-monitor` folder
+2. Delete the `aicodingbar` folder
 3. Optionally delete config: `~/.aicoding-bar/`
 
 ## Troubleshooting
@@ -214,6 +218,10 @@ This removes ClaudeMonitor entries from `~/.claude/settings.json` without affect
 - **WinForms** — System tray icon
 - **Win32 P/Invoke** — Native taskbar child window (no external dependencies)
 - **Node.js** — Hook script and installer
+
+## Inspired by
+
+[clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk) — The original cross-platform AI coding pet that pioneered the hook-driven session monitoring model. AiCodingBar ports this concept to Windows with a native taskbar integration and multi-agent support.
 
 ## License
 

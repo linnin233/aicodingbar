@@ -1,8 +1,12 @@
-# ClaudeMonitor
+# AiCodingBar
 
 [English](README.md)
 
-在 Windows 任务栏中实时显示 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的会话状态。
+在 Windows 任务栏中实时显示 AI 编程代理的状态 — 支持 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 和 [opencode](https://opencode.ai)。
+
+## 开源致谢
+
+AiCodingBar 的设计深受 [clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk)（作者 [@rullerzhou-afk](https://github.com/rullerzhou-afk)）的启发和影响。核心监控架构 — Hook 驱动的事件收集、状态引擎、死会话清理 — 沿用了 clawd-on-desk 经过验证的设计模式。Claude Code 的 Hook 注册策略（async/timeout 加固）参考了 clawd-on-desk v0.8.1 的修复。我们也积极参与上游贡献 — AiCodingBar 的任务完成时托盘闪烁功能已被合入 clawd-on-desk v0.8.1 ([#335](https://github.com/rullerzhou-afk/clawd-on-desk/pull/335))。
 
 ## 效果
 
@@ -44,35 +48,35 @@
 
 ### 方式一：下载发行版（推荐）
 
-1. 前往 [Releases](https://github.com/linnin233/claude-monitor/releases)
-2. 下载最新的 `ClaudeMonitor-vX.X.X.zip`
+1. 前往 [Releases](https://github.com/linnin233/aicodingbar/releases)
+2. 下载最新的 `AiCodingBar-vX.X.X-Beta.zip`
 3. 解压到任意目录
-4. 运行 `taskbar-monitor.exe`
+4. 运行 `AiCodingBar.exe`
 
 ### 方式二：从源码构建
 
 ```bash
 # 前置条件：.NET 8.0 SDK + Node.js
-git clone https://github.com/linnin233/claude-monitor.git
-cd claude-monitor
+git clone https://github.com/linnin233/aicodingbar.git
+cd aicodingbar
 
 # 构建
-dotnet build taskbar-monitor -c Release
+dotnet build AiCodingBar -c Release
 
 # 直接运行
-dotnet run --project taskbar-monitor
+dotnet run --project AiCodingBar
 
 # 或发布为单文件可执行程序
-dotnet publish taskbar-monitor -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+dotnet publish AiCodingBar -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
-发布的可执行文件位于 `taskbar-monitor/bin/Release/net8.0-windows/win-x64/publish/`。
+发布的可执行文件位于 `AiCodingBar/bin/Release/net8.0-windows/win-x64/publish/`。
 
 ## 使用说明
 
 ### 首次运行
 
-1. 启动 `taskbar-monitor.exe`
+1. 启动 `AiCodingBar.exe`
 2. 程序自动将 Claude Code Hook 安装到 `~/.claude/settings.json`
 3. 任务栏（系统托盘左侧）出现彩色状态标签
 4. 系统托盘区域出现程序图标
@@ -178,16 +182,16 @@ Windows 任务栏
 ### 移除 Hook
 
 ```bash
-cd claude-monitor/hooks
+cd aicodingbar/hooks
 node install.js uninstall
 ```
 
-这会从 `~/.claude/settings.json` 中移除 ClaudeMonitor 的条目，不影响其他 Hook。
+这会从 `~/.claude/settings.json` 中移除 AiCodingBar 的条目，不影响其他 Hook。
 
 ### 删除程序
 
 1. 退出程序（右键托盘图标 → Exit）
-2. 删除 `claude-monitor` 目录
+2. 删除 `aicodingbar` 目录
 3. 可选：删除配置目录 `~/.aicoding-bar/`
 
 ## 常见问题
@@ -214,6 +218,10 @@ node install.js uninstall
 - **WinForms** — 系统托盘图标
 - **Win32 P/Invoke** — 原生任务栏子窗口（无外部依赖）
 - **Node.js** — Hook 脚本和安装器
+
+## 致敬
+
+[clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk) — 开创了 Hook 驱动 AI 编程代理监控模式的标杆项目。AiCodingBar 将此模式移植到 Windows 平台，以原生任务栏集成和多代理支持为特色。
 
 ## License
 
