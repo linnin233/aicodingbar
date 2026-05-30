@@ -301,7 +301,7 @@ public class NativeTaskbarText : IDisposable
         _line2Segs.Clear();
 
         var sessions = _engine.Sessions.Values
-            .Where(s => s.StatePriority > 1) // 过滤 idle(1) 和 sleeping(0) — 只显示活跃状态
+            .Where(s => s.StatePriority > 0) // 过滤 sleeping(0) — idle(1) 的 session 仍显示，表示 agent 在线
             .OrderBy(s => s.SortIndex)
             .ToList();
 
