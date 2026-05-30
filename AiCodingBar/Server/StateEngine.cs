@@ -54,9 +54,28 @@ public class StateEngine
                 ? sid.GetString() ?? "default"
                 : "default";
 
-            // SessionEnd → 立即删除 session（clawd-on-desk 模式）
+            // SessionEnd → 如果 agent 进程还活着（子 session 删除/旧版 plugin），
+            // 标记为 sleeping 而非直接删除，避免用户看到断连假象。
+            // 只有 agent 进程已死或 session 未设置 AgentPid 时才真正删除。
             if (eventName == "SessionEnd")
             {
+                if (Sessions.TryGetValue(sessionId, out var existing) &&
+                    existing.AgentPid.HasValue &&
+                    ProcessHelper.IsProcessAlive(existing.AgentPid.Value))
+                {
+                    // 全局 _lastState 去重：避免重复的 sleeping 状态触发无意义刷新
+                    existing.Status = "sleeping";
+                    existing.StateKind = StateType.Persistent;
+                    existing.StatePriority = 0;
+                    existing.LastEvent = eventName;
+                    existing.LastUpdateAt = DateTime.Now;
+                    existing.OneShotStartedAt = null;
+                    existing.OneShotReturnTo = null;
+                    CancelOneShotTimer(sessionId);
+                    OnSessionUpdated?.Invoke(existing);
+                    OnAnyChange?.Invoke();
+                    return existing;
+                }
                 RemoveSession(sessionId);
                 return null;
             }
