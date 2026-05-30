@@ -215,7 +215,14 @@ function translateEvent(event) {
 
     case "session.deleted":
     case "server.instance.disposed":
-      return { state: "sleeping", event: "SessionEnd" };
+      // session.deleted 可能是子 session/任务完成清理（agent 进程还活着），
+      // 映射为 Stop（完成通知→idle）而非 SessionEnd（立即删除），
+      // 避免用户看到 session 频繁创建/删除以为断连。
+      // 只有 server.instance.disposed 时才真正报 SessionEnd。
+      if (event.type === "server.instance.disposed") {
+        return { state: "sleeping", event: "SessionEnd" };
+      }
+      return { state: "attention", event: "Stop" };
 
     default:
       return null;
