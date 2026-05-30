@@ -127,13 +127,24 @@ public class StateEngine
         string? returnToStatus = null;
         if (info.StateKind == StateType.OneShot || info.StateKind == StateType.Blocking)
         {
-            // 如果上一个状态是 Persistent → 用它做回退目标
-            if (prevInfo != null && prevInfo.StateKind == StateType.Persistent)
+            // 优先使用 mapping 明确指定的回退目标
+            if (!string.IsNullOrEmpty(mapping.OneShotReturnState))
+            {
+                returnToStatus = mapping.OneShotReturnState;
+            }
+            // 其次使用上一个 Persistent 状态
+            else if (prevInfo != null && prevInfo.StateKind == StateType.Persistent)
+            {
                 returnToStatus = previousState;
+            }
             else if (state.OneShotReturnTo != null)
+            {
                 returnToStatus = state.OneShotReturnTo;
+            }
             else
+            {
                 returnToStatus = "idle";
+            }
         }
 
         // 更新 session

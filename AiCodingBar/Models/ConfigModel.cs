@@ -30,23 +30,23 @@ public class ConfigModel
         ["UserPromptSubmit"]   = new("thinking",     "思考", "思考", "#E8A000", StateKind: "Persistent", Priority: 2),
         ["PreToolUse"]         = new("working",      "工作", "工作", "#0080E0", StateKind: "Persistent", Priority: 3),
         ["PostToolUse"]        = new("working",      "工作", "工作", "#0080E0", StateKind: "Persistent", Priority: 3),
-        ["PostToolUseFailure"] = new("error",        "错误", "错误", "#E04040", StateKind: "OneShot",    Priority: 8, AutoReturnMs: 6000),
-        ["Stop"]               = new("attention",    "完成", "完成", "#00C030", StateKind: "OneShot",    Priority: 5, AutoReturnMs: 6000),
-        ["StopFailure"]        = new("error",        "错误", "错误", "#E04040", StateKind: "OneShot",    Priority: 8, AutoReturnMs: 6000),
+        ["PostToolUseFailure"] = new("error",        "错误", "错误", "#E04040", StateKind: "OneShot",    Priority: 8, AutoReturnMs: 6000, OneShotReturnState: "idle"),
+        ["Stop"]               = new("attention",    "完成", "完成", "#00C030", StateKind: "OneShot",    Priority: 5, AutoReturnMs: 6000, OneShotReturnState: "idle"),
+        ["StopFailure"]        = new("error",        "错误", "错误", "#E04040", StateKind: "OneShot",    Priority: 8, AutoReturnMs: 6000, OneShotReturnState: "idle"),
         ["SubagentStart"]      = new("juggling",     "调度", "调度", "#9050C0", StateKind: "Persistent", Priority: 4),
         ["SubagentStop"]       = new("working",      "工作", "工作", "#0080E0", StateKind: "Persistent", Priority: 3),
         ["PreCompact"]         = new("sweeping",     "清理", "清理", "#A06030", StateKind: "OneShot",    Priority: 6, AutoReturnMs: 3000),
-        ["PostCompact"]        = new("attention",    "完成", "完成", "#00C030", StateKind: "OneShot",    Priority: 5, AutoReturnMs: 6000),
+        ["PostCompact"]        = new("attention",    "完成", "完成", "#00C030", StateKind: "OneShot",    Priority: 5, AutoReturnMs: 6000, OneShotReturnState: "idle"),
 
         // ── notification 拆分为三种 ──
         // 普通通知 → 非阻塞，6s 自动回退
-        ["Notification"]       = new("notification", "通知", "通知", "#E06090", StateKind: "OneShot",    Priority: 7, AutoReturnMs: 6000),
+        ["Notification"]       = new("notification", "通知", "通知", "#E06090", StateKind: "OneShot",    Priority: 7, AutoReturnMs: 6000, OneShotReturnState: "idle"),
         // 提问 Elicitation → 阻塞等待回答，不自动回退
         ["Elicitation"]        = new("question",     "提问", "提问", "#FF8040", StateKind: "Blocking",   Priority: 7),
         // 权限请求 PermissionRequest → 阻塞等待审批，不自动回退（通过 /permission 端点触发）
         ["PermissionRequest"]  = new("permission",   "权限", "权限", "#FF6080", StateKind: "Blocking",   Priority: 7),
 
-        ["WorktreeCreate"]     = new("carrying",     "执行", "执行", "#6090C0", StateKind: "OneShot",    Priority: 4, AutoReturnMs: 3000),
+        ["WorktreeCreate"]     = new("carrying",     "执行", "执行", "#6090C0", StateKind: "OneShot",    Priority: 4, AutoReturnMs: 3000, OneShotReturnState: "idle"),
     };
 
     /// <summary>
@@ -155,6 +155,9 @@ public class StateMapping
     /// <summary>OneShot 状态的自动回退时间 (ms)，0 表示不自动回退。Blocking 状态忽略此值</summary>
     public int AutoReturnMs { get; set; } = 0;
 
+    /// <summary>OneShot/Blocking 状态回退到的目标状态。null 时自动使用前一个 Persistent 状态或 "idle"</summary>
+    public string? OneShotReturnState { get; set; }
+
     public StateMapping()
     {
         State = "idle";
@@ -164,7 +167,7 @@ public class StateMapping
     }
 
     public StateMapping(string state, string name, string abbr, string color,
-        string StateKind = "Persistent", int Priority = 1, int AutoReturnMs = 0)
+        string StateKind = "Persistent", int Priority = 1, int AutoReturnMs = 0, string? OneShotReturnState = null)
     {
         this.State = state;
         this.Name = name;
@@ -173,6 +176,7 @@ public class StateMapping
         this.StateKind = StateKind;
         this.Priority = Priority;
         this.AutoReturnMs = AutoReturnMs;
+        this.OneShotReturnState = OneShotReturnState;
     }
 }
 

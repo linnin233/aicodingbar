@@ -300,7 +300,10 @@ public class NativeTaskbarText : IDisposable
         _line1Segs.Clear();
         _line2Segs.Clear();
 
-        var sessions = _engine.Sessions.Values.OrderBy(s => s.SortIndex).ToList();
+        var sessions = _engine.Sessions.Values
+            .Where(s => s.StatePriority > 1) // 过滤 idle(1) 和 sleeping(0) — 只显示活跃状态
+            .OrderBy(s => s.SortIndex)
+            .ToList();
 
         if (sessions.Count == 0)
         {
