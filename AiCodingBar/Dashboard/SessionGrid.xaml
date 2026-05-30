@@ -30,6 +30,7 @@
                   HeadersVisibility="Column">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="序号" Binding="{Binding SortIndex}" Width="50"/>
+                <DataGridTextColumn Header="代理" Binding="{Binding AgentName}" Width="60"/>
                 <DataGridTextColumn Header="Session ID" Binding="{Binding SessionId}" Width="120"/>
                 <DataGridTextColumn Header="名称" Binding="{Binding SessionTitle}" Width="140"/>
                 <DataGridTemplateColumn Header="状态" Width="80">

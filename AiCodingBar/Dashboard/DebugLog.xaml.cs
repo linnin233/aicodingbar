@@ -41,7 +41,7 @@ public partial class DebugLog : UserControl
         _engine.OnSessionUpdated += (session) =>
         {
             Dispatcher.Invoke(() =>
-                Log($"Session UPDATED: [{session.SortIndex}] {session.SessionId} -> {session.Status} (event: {session.LastEvent})", GreenBrush));
+                Log($"Session UPDATED: [{session.SortIndex}] {session.SessionId} -> {session.Status} [agent:{session.AgentId}] (event: {session.LastEvent})", GreenBrush));
         };
         _engine.OnSessionRemoved += (session) =>
         {
