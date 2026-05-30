@@ -206,10 +206,8 @@ function translateEvent(event) {
       return { state: "sweeping", event: "PreCompact" };
 
     case "session.idle":
-      // 只有 root session 的 idle 才发 attention（完成）
-      if (_rootSessionId && props.sessionID && props.sessionID !== _rootSessionId) {
-        return { state: "sleeping", event: "SessionEnd" };
-      }
+      // 所有 session idle 都发完成通知（OneShot 6s 自动回退 idle）
+      // 真正删除只在 session.deleted / server.instance.disposed 时触发 SessionEnd
       return { state: "attention", event: "Stop" };
 
     case "session.error":
