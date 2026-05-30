@@ -111,6 +111,9 @@ public class TaskbarConfig
 
     /// <summary>是否根据 taskbar 高度自动计算字体大小（双行模式推荐开启）</summary>
     public bool AutoFontSize { get; set; } = true;
+
+    /// <summary>Dashboard 窗口是否固定置顶（不自动隐藏）</summary>
+    public bool PinWindow { get; set; } = true;
 }
 
 public static class ConfigExtensions

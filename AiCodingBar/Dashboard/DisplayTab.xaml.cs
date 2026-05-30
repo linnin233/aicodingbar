@@ -10,6 +10,21 @@ public partial class DisplayTab : UserControl
 {
     private readonly ConfigManager _config;
     private readonly NativeTaskbarText _taskbarText;
+    private bool _pinned;
+
+    /// <summary>固定窗口切换事件</summary>
+    public event Action<bool>? PinChanged;
+
+    /// <summary>当前固定状态（供外部读取）</summary>
+    public bool IsPinned
+    {
+        get => _pinned;
+        set
+        {
+            _pinned = value;
+            PinWindowCheck.IsChecked = value;
+        }
+    }
 
     public DisplayTab(ConfigManager config, NativeTaskbarText taskbarText)
     {
@@ -35,6 +50,17 @@ public partial class DisplayTab : UserControl
         FontNameBox.Text = t.FontName;
         FontSizeBox.Text = t.FontSize.ToString("0.#");
         AutoFontCheck.IsChecked = t.AutoFontSize;
+
+        // 固定窗口（默认 true）
+        _pinned = t.PinWindow;
+        PinWindowCheck.IsChecked = _pinned;
+        PinChanged?.Invoke(_pinned);
+    }
+
+    private void PinWindowCheck_Changed(object sender, RoutedEventArgs e)
+    {
+        _pinned = PinWindowCheck.IsChecked == true;
+        PinChanged?.Invoke(_pinned);
     }
 
     private void SaveConfig()
@@ -49,6 +75,7 @@ public partial class DisplayTab : UserControl
         t.FontName = FontNameBox.Text.Trim();
         if (float.TryParse(FontSizeBox.Text, out var fs)) t.FontSize = fs;
         t.AutoFontSize = AutoFontCheck.IsChecked == true;
+        t.PinWindow = _pinned;
 
         _config.Save();
         _taskbarText.Refresh();

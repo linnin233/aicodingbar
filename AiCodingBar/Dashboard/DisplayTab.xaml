@@ -5,19 +5,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,20">
+            <!-- 标题 -->
+            <TextBlock Text="显示设置" FontSize="16" FontWeight="Bold" Margin="0,0,0,2"/>
+            <TextBlock Text="自定义任务栏叠加文字的外观和行为" FontSize="12" Foreground="#888888" Margin="0,2,0,10"/>
 
-        <!-- 标题 -->
-        <TextBlock Grid.Row="0" Text="显示设置" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
-        <TextBlock Grid.Row="0" Text="自定义任务栏叠加文字的外观和行为" FontSize="12" Foreground="#888888" Margin="0,24,0,12"/>
+            <!-- ─ 窗口行为 ─ -->
+            <TextBlock Text="窗口行为" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,4,0,4"/>
+            <Separator/>
 
-        <!-- ─ 显示模式 ─ -->
-        <StackPanel Grid.Row="1">
+            <!-- 固定窗口 -->
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="固定窗口"/>
+                    <TextBlock Text="窗口失焦不自动隐藏" FontSize="11" Foreground="#888"/>
+                </StackPanel>
+                <CheckBox x:Name="PinWindowCheck" Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"
+                          Checked="PinWindowCheck_Changed" Unchecked="PinWindowCheck_Changed"/>
+            </Grid>
+
+            <!-- ─ 显示模式 ─ -->
             <TextBlock Text="任务栏显示" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,12,0,4"/>
             <Separator/>
 
@@ -93,10 +105,8 @@
                 </StackPanel>
                 <TextBox x:Name="ThresholdBox" Grid.Column="1" Width="60" HorizontalAlignment="Left"/>
             </Grid>
-        </StackPanel>
 
-        <!-- ─ 字体 ─ -->
-        <StackPanel Grid.Row="2">
+            <!-- ─ 字体 ─ -->
             <TextBlock Text="字体" FontSize="11" FontWeight="Bold" Foreground="#999" Margin="0,16,0,4"/>
             <Separator/>
 
@@ -140,5 +150,5 @@
 
             <TextBlock x:Name="StatusText" FontSize="12" Foreground="#888" Margin="0,8,0,0"/>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

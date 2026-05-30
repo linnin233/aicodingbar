@@ -33,6 +33,7 @@ public partial class MainWindow : Window
         _sessionGrid.PinChanged += OnPinChanged;
 
         _displayTab = new DisplayTab(config, taskbarText);
+        _displayTab.PinChanged += OnPinChanged;
 
         _agentsTab = new AgentsTab(config, taskbarText);
 
@@ -47,6 +48,9 @@ public partial class MainWindow : Window
 
         // 窗口失焦自动隐藏（除非 pin 住）
         Deactivated += Window_Deactivated;
+
+        // 从 config 加载 PinWindow 初始状态
+        _pinned = config.Current.Taskbar.PinWindow;
     }
 
     public void LogDebug(string msg)
